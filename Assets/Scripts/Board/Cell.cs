@@ -72,18 +72,18 @@ public class Cell : MonoBehaviour
     {
         if (Item == null) return;
 
-        Item.ExplodeView();
+        Item?.ExplodeView();
         Item = null;
     }
 
     internal void AnimateItemForHint()
     {
-        Item.AnimateForHint();
+        Item?.AnimateForHint();
     }
 
     internal void StopHintAnimation()
     {
-        Item.StopAnimateForHint();
+        Item?.StopAnimateForHint();
     }
 
     internal void ApplyItemMoveToPosition()

@@ -1,25 +1,34 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class UIPanelGame : MonoBehaviour,IMenu
+public class UIPanelGame : MonoBehaviour, IMenu
 {
     public Text LevelConditionView;
 
-    [SerializeField] private Button btnPause;
+    [SerializeField] private Button btnPause, btnRestart;
 
     private UIMainManager m_mngr;
 
     private void Awake()
     {
         btnPause.onClick.AddListener(OnClickPause);
+        btnRestart.onClick.AddListener(OnClickRestart);
+    }
+
+    private void OnDestroy()
+    {
+        btnPause.onClick.RemoveListener(OnClickPause);
+        btnRestart.onClick.RemoveListener(OnClickRestart);
     }
 
     private void OnClickPause()
     {
         m_mngr.ShowPauseMenu();
+    }
+
+    private void OnClickRestart()
+    {
+        GameManager.Instance.RestartLevel();
     }
 
     public void Setup(UIMainManager mngr)

@@ -13,6 +13,8 @@ public class GameManager : Singleton<GameManager>
         MOVES
     }
 
+    private eLevelMode currentMode;
+
     public enum eStateGame
     {
         SETUP,
@@ -100,6 +102,7 @@ public class GameManager : Singleton<GameManager>
         m_levelCondition.ConditionCompleteEvent += GameOver;
 
         State = eStateGame.GAME_STARTED;
+        currentMode = mode;
     }
 
     public void GameOver()
@@ -114,6 +117,11 @@ public class GameManager : Singleton<GameManager>
             m_boardController.Clear();
             Destroy(m_boardController.gameObject);
             m_boardController = null;
+        }
+
+        if (m_levelCondition != null)
+        {
+            Destroy(m_levelCondition);
         }
     }
 
@@ -130,5 +138,12 @@ public class GameManager : Singleton<GameManager>
             Destroy(m_levelCondition);
             m_levelCondition = null;
         }
+    }
+
+    public void RestartLevel()
+    {
+        ClearLevel();
+        LoadLevel(currentMode);
+        Debug.Log("Restart");
     }
 }
