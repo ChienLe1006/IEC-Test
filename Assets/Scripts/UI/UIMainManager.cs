@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIMainManager : MonoBehaviour
+public class UIMainManager : Singleton<UIMainManager>
 {
     private IMenu[] m_menuList;
 
     private GameManager m_gameManager;
 
-    private void Awake()
+    private new void Awake()
     {
         m_menuList = GetComponentsInChildren<IMenu>(true);
     }
@@ -77,14 +74,14 @@ public class UIMainManager : MonoBehaviour
         for (int i = 0; i < m_menuList.Length; i++)
         {
             IMenu menu = m_menuList[i];
-            if(menu is T)
+            if (menu is T)
             {
                 menu.Show();
             }
             else
             {
                 menu.Hide();
-            }            
+            }
         }
     }
 

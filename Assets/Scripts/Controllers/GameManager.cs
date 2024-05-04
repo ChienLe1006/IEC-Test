@@ -1,10 +1,9 @@
 ﻿using DG.Tweening;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
     public event Action<eStateGame> StateChangedAction = delegate { };
 
@@ -29,15 +28,16 @@ public class GameManager : MonoBehaviour
         get { return m_state; }
         private set
         {
-            m_state = value;
+            if (m_state == value) return; // Avoid unnecessary state changes
 
-            StateChangedAction(m_state);
+            m_state = value;
+            StateChangedAction?.Invoke(m_state);
         }
     }
 
+    [field: SerializeField] public Camera MainCamera { get; private set; }
 
-    private GameSettings m_gameSettings;
-
+    [SerializeField] private GameSettings m_gameSettings;
 
     private BoardController m_boardController;
 
@@ -45,13 +45,13 @@ public class GameManager : MonoBehaviour
 
     private LevelCondition m_levelCondition;
 
-    private void Awake()
+    private new void Awake()
     {
         State = eStateGame.SETUP;
 
-        m_gameSettings = Resources.Load<GameSettings>(Constants.GAME_SETTINGS_PATH);
+        //m_gameSettings = Resources.Load<GameSettings>(Constants.GAME_SETTINGS_PATH);
 
-        m_uiMenu = FindObjectOfType<UIMainManager>();
+        m_uiMenu = UIMainManager.Instance;
         m_uiMenu.Setup(this);
     }
 
@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
     {
         State = state;
 
-        if(State == eStateGame.PAUSE)
+        if (State == eStateGame.PAUSE)
         {
             DOTween.PauseAll();
         }
@@ -119,11 +119,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator WaitBoardController()
     {
-        while (m_boardController.IsBusy)
-        {
-            yield return new WaitForEndOfFrame();
-        }
-
+        yield return new WaitUntil(() => !m_boardController.IsBusy);
         yield return new WaitForSeconds(1f);
 
         State = eStateGame.GAME_OVER;
@@ -131,7 +127,6 @@ public class GameManager : MonoBehaviour
         if (m_levelCondition != null)
         {
             m_levelCondition.ConditionCompleteEvent -= GameOver;
-
             Destroy(m_levelCondition);
             m_levelCondition = null;
         }

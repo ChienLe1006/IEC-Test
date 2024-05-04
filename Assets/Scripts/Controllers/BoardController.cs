@@ -39,7 +39,7 @@ public class BoardController : MonoBehaviour
 
         m_gameManager.StateChangedAction += OnGameStateChange;
 
-        m_cam = Camera.main;
+        m_cam = GameManager.Instance.MainCamera;
 
         m_board = new Board(this.transform, gameSettings);
 
@@ -232,15 +232,16 @@ public class BoardController : MonoBehaviour
         StartCoroutine(ShiftDownItemsCoroutine());
     }
 
+    private readonly WaitForSeconds waitTime = new WaitForSeconds(0.2f);
     private IEnumerator ShiftDownItemsCoroutine()
     {
         m_board.ShiftDownItems();
 
-        yield return new WaitForSeconds(0.2f);
+        yield return waitTime;
 
         m_board.FillGapsWithNewItems();
 
-        yield return new WaitForSeconds(0.2f);
+        yield return waitTime;
 
         FindMatchesAndCollapse();
     }
@@ -249,11 +250,11 @@ public class BoardController : MonoBehaviour
     {
         m_board.ExplodeAllItems();
 
-        yield return new WaitForSeconds(0.2f);
+        yield return waitTime;
 
         m_board.Fill();
 
-        yield return new WaitForSeconds(0.2f);
+        yield return waitTime;
 
         FindMatchesAndCollapse();
     }
@@ -262,7 +263,7 @@ public class BoardController : MonoBehaviour
     {
         m_board.Shuffle();
 
-        yield return new WaitForSeconds(0.3f);
+        yield return waitTime;
 
         FindMatchesAndCollapse();
     }
@@ -270,8 +271,8 @@ public class BoardController : MonoBehaviour
 
     private void SetSortingLayer(Cell cell1, Cell cell2)
     {
-        if (cell1.Item != null) cell1.Item.SetSortingLayerHigher();
-        if (cell2.Item != null) cell2.Item.SetSortingLayerLower();
+        cell1.Item?.SetSortingLayerHigher();
+        cell2.Item?.SetSortingLayerLower();
     }
 
     private bool AreItemsNeighbor(Cell cell1, Cell cell2)
