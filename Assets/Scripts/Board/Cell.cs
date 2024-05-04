@@ -32,6 +32,10 @@ public class Cell : MonoBehaviour
             BoardY == other.BoardY && Mathf.Abs(BoardX - other.BoardX) == 1;
     }
 
+    public Cell[] GetNeighbors()
+    {
+        return new Cell[] { NeighbourUp, NeighbourRight, NeighbourBottom, NeighbourLeft };
+    }
 
     public void Free()
     {

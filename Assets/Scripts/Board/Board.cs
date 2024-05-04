@@ -1,6 +1,5 @@
 ﻿using DG.Tweening;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -145,16 +144,36 @@ public class Board
                 Cell cell = m_cells[x, y];
                 if (!cell.IsEmpty) continue;
 
-                NormalItem item = new NormalItem();
-
-                item.SetType(Utils.GetRandomNormalType());
-                item.SetView();
-                item.SetViewRoot(m_root);
+                NormalItem item = GetPerfectNormalItem(cell);
 
                 cell.Assign(item);
                 cell.ApplyItemPosition(true);
             }
         }
+    }
+
+    private NormalItem GetPerfectNormalItem(Cell cell) // return a new NormalItem which has different type from its neighbours and the least amount in the board
+    {
+        NormalItem item = new NormalItem();
+
+        HashSet<NormalItem.eNormalType> spawnableTypes = new HashSet<NormalItem.eNormalType>(Enum.GetValues(typeof(NormalItem.eNormalType)).Cast<NormalItem.eNormalType>());
+
+        foreach (var neighbour in cell.GetNeighbors())
+        {
+            if (neighbour != null && neighbour.Item is NormalItem nitem)
+            {
+                if (spawnableTypes.Contains(nitem.ItemType))
+                {
+                    spawnableTypes.Remove(nitem.ItemType);
+                }
+            }
+        }
+
+        item.SetType(Utils.GetTypeByAmountInBoard(spawnableTypes.ToList(), m_cells, boardSizeX, boardSizeY));
+        item.SetView();
+        item.SetViewRoot(m_root);
+
+        return item;
     }
 
     internal void ExplodeAllItems()
@@ -350,7 +369,7 @@ public class Board
         var dir = GetMatchDirection(matches);
 
         var bonus = matches.Where(x => x.Item is BonusItem).FirstOrDefault();
-        if(bonus == null)
+        if (bonus == null)
         {
             return matches;
         }
