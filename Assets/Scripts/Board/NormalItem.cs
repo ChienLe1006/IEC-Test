@@ -53,6 +53,11 @@ public class NormalItem : Item
         return prefabname;
     }
 
+    protected override int GetPrefabByIndex()
+    {
+        return (int)ItemType;
+    }
+
     internal override bool IsSameType(Item other)
     {
         NormalItem it = other as NormalItem;

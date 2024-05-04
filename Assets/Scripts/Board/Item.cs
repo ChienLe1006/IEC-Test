@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
@@ -14,19 +12,27 @@ public class Item
 
     public virtual void SetView()
     {
-        string prefabname = GetPrefabName();
+        //string prefabname = GetPrefabName();
 
-        if (!string.IsNullOrEmpty(prefabname))
+        //if (!string.IsNullOrEmpty(prefabname))
+        //{
+        //    GameObject prefab = Resources.Load<GameObject>(prefabname);
+        //    if (prefab)
+        //    {
+        //        View = GameObject.Instantiate(prefab).transform;
+        //    }
+        //}
+
+        GameObject itemPrefab = GameDatabase.Instance.GetNormalItem(GetPrefabByIndex());
+        if (itemPrefab)
         {
-            GameObject prefab = Resources.Load<GameObject>(prefabname);
-            if (prefab)
-            {
-                View = GameObject.Instantiate(prefab).transform;
-            }
+            View = itemPrefab.Spawn().transform;
         }
     }
 
     protected virtual string GetPrefabName() { return string.Empty; }
+
+    protected virtual int GetPrefabByIndex() => 0;
 
     public virtual void SetCell(Cell cell)
     {
@@ -101,7 +107,8 @@ public class Item
             View.DOScale(0.1f, 0.1f).OnComplete(
                 () =>
                 {
-                    GameObject.Destroy(View.gameObject);
+                    //GameObject.Destroy(View.gameObject);
+                    View.gameObject.Despawn();
                     View = null;
                 }
                 );
