@@ -30,4 +30,24 @@ public class MainToolMenu
         Selection.activeObject = asset;
     }
 
+    [MenuItem(menuTitle + "Open Game Database", false, 110)]
+    static void OpenGameDatabase()
+    {
+        GameDatabase asset = GameDatabase.Instance;
+
+        EditorUtility.FocusProjectWindow();
+        Selection.activeObject = asset;
+    }
+
+    [MenuItem(menuTitle + "Reskin Item/Original", false, 100)]
+    static void SetOriginalSkin()
+    {
+        GameDatabase.Instance.SetOriginalSkin();
+    }
+
+    [MenuItem(menuTitle + "Reskin Item/New", false, 101)]
+    static void SetNewSkin()
+    {
+        GameDatabase.Instance.SetNewSkin();
+    }
 }
